@@ -118,12 +118,12 @@
         
         <!-- Controls & Tools Bar -->
         <div class="bg-[#0a110e] p-4 rounded-xl border border-emerald-900 flex flex-wrap justify-between items-center gap-3">
-            <!-- Left Side Actions: File Import -->
+            <!-- Left Side Actions: File Import (بدون تحديد صيغة لكي تظهر كل الملفات بوضوح) -->
             <div class="flex flex-wrap items-center gap-2">
                 <label for="fileInput" class="btn-cyber px-4 py-2 rounded-lg cursor-pointer text-sm font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-file-import"></i> رفع ملف لعبة (JSON/TXT)
+                    <i class="fa-solid fa-file-import"></i> رفع ملف لعبة
                 </label>
-                <input type="file" id="fileInput" accept=".json,.txt" class="hidden" onchange="handleFileUpload(event)">
+                <input type="file" id="fileInput" class="hidden" onchange="handleFileUpload(event)">
                 
                 <button onclick="loadSampleData()" class="btn-cyber px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
                     <i class="fa-solid fa-vial"></i> تحميل نموذج تجريبي
@@ -233,9 +233,10 @@
                     const content = e.target.result;
                     let parsedData = {};
 
-                    if (file.name.endsWith('.json')) {
+                    // محاولة قراءة الملف كـ JSON، وإذا لم ينجح يتم التعامل معه كنص عادي سطر بسطر
+                    try {
                         parsedData = JSON.parse(content);
-                    } else {
+                    } catch (jsonErr) {
                         const lines = content.split('\n');
                         lines.forEach((line, index) => {
                             if (line.trim()) {
@@ -252,7 +253,7 @@
                     populateData(parsedData);
                     showToast("تم تحميل الملف ونصوص اللعبة بنجاح! ✅");
                 } catch (err) {
-                    showToast("خطأ في قراءة الملف. تأكد من صحة التنسيق.", "fa-triangle-exclamation", true);
+                    showToast("خطأ في قراءة الملف. تأكد من صحة المحتوى.", "fa-triangle-exclamation", true);
                 }
             };
             reader.readAsText(file);
